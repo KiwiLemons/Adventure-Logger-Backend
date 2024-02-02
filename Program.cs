@@ -16,14 +16,13 @@ if (builder.Environment.IsProduction())
     var port = Environment.GetEnvironmentVariable("PORT");
     if (!String.IsNullOrEmpty(port))
         builder.WebHost.UseUrls($"http://*:{port}");
+
     var ConnBuilder = new MySqlConnectionStringBuilder();
-    ConnBuilder.Server = "adventure-logger-408520:us-central1:adventure-db";
+    ConnBuilder.Server = "34.136.209.180";
+    ConnBuilder.Database = "adventure-db";
     ConnBuilder.UserID = "root";
     ConnBuilder.Password = DBpass;
-    ConnBuilder.ConnectionProtocol = MySqlConnectionProtocol.UnixSocket;
-    ConnBuilder.SslMode = MySqlSslMode.Disabled;
     ConnBuilder.Pooling = true;
-
     builder.Services.AddDbContext<AdventureLoggerBackendContext>(options =>
         options.UseMySQL(ConnBuilder.GetConnectionString(true)));
 }
