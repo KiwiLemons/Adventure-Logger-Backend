@@ -19,7 +19,7 @@ if (builder.Environment.IsProduction())
 
     var ConnBuilder = new MySqlConnectionStringBuilder();
     ConnBuilder.Server = "34.136.209.180";
-    ConnBuilder.Database = "adventure-db";
+    ConnBuilder.Database = "adventure_logger";
     ConnBuilder.UserID = "root";
     ConnBuilder.Password = DBpass;
     ConnBuilder.Pooling = true;
