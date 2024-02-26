@@ -13,18 +13,15 @@ namespace AdventureLoggerBackend.Controllers
     {
 
         private readonly AdventureLoggerBackendContext _context;
-
-        public HomeController(AdventureLoggerBackendContext context)
-        {
-            _context = context;
-        }
-
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+
+        public HomeController(AdventureLoggerBackendContext context, ILogger<HomeController> logger)
         {
+            _context = context;
             _logger = logger;
         }
+
 
         public IActionResult Index(string username)
         {
