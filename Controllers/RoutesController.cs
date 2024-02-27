@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AdventureLoggerBackend.Data;
 using AdventureLoggerBackend.Models;
 using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
 
 namespace AdventureLoggerBackend.Controllers
 {
@@ -81,11 +82,12 @@ namespace AdventureLoggerBackend.Controllers
         {
             Models.Route? route = await _context.Route.FindAsync(route_id);
             if (route == null)
-            {
                 return NoContent();
-            }
 
-            route.data = data;
+            var routeData = JArray.Parse(route.data);
+            routeData.Add(JToken.Parse(data));
+            route.data = routeData.ToJson();
+
             await _context.SaveChangesAsync();
 
             return Content("Data added");
