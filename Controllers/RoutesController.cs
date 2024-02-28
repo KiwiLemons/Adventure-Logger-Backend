@@ -93,6 +93,21 @@ namespace AdventureLoggerBackend.Controllers
             return Content("Data added");
         }
 
+        // POST: api/Routes
+        // Create a route from a name
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Models.Route>> PostRoute(Models.Route route)
+        {
+            Console.WriteLine(route);
+            var madeRoute = _context.Route.Add(route);
+            madeRoute.Entity.data = "[]";
+
+            //await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetRoute", new { id = route.route_id }, route);
+        }
+
         // DELETE: api/Routes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoute(int id)
