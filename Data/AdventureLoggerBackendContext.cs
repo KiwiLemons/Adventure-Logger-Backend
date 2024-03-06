@@ -16,6 +16,8 @@ namespace AdventureLoggerBackend.Data
 
         public DbSet<AdventureLoggerBackend.Models.User> User { get; set; } = default!;
         public DbSet<AdventureLoggerBackend.Models.Route> Route { get; set; } = default!;
+        public DbSet<AdventureLoggerBackend.Models.Friend> Friends { get; set; } = default!;
+
 
     }
 }
