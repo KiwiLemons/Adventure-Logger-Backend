@@ -42,6 +42,24 @@ namespace AdventureLoggerBackend.Controllers
             return user;
         }
 
+        [HttpGet("{id}/following")]
+        public async Task<ActionResult<IEnumerable<UserDisplay>>> GetFollowing(int id)
+        {
+            //Get a list of IDs that user [id] follows
+            var friends = _context.Friend.Where(f => f.from == id).Select(f => f.to).ToList();
+
+            return await _context.User.Where(u => friends.Contains(u.user_id)).Select(u => new UserDisplay {user_id = u.user_id, UserName = u.UserName, profile_picture = u.profile_picture}).ToListAsync();
+        }
+
+        [HttpGet("{id}/followers")]
+        public async Task<ActionResult<IEnumerable<UserDisplay>>> GetFollowers(int id)
+        {
+            //Get a list of followers IDs for user [id]
+            var friends = _context.Friend.Where(f => f.to == id).Select(f => f.from).ToList();
+
+            return await _context.User.Where(u => friends.Contains(u.user_id)).Select(u => new UserDisplay { user_id = u.user_id, UserName = u.UserName, profile_picture = u.profile_picture }).ToListAsync();
+        }
+
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

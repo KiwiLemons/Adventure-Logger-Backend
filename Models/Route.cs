@@ -13,6 +13,6 @@ namespace AdventureLoggerBackend.Models
         [Required]
         [Length(5,45)]
         public string name { get; set; }
-        public string data {  get; set; }
+        public string? data {  get; set; }
     }
 }
