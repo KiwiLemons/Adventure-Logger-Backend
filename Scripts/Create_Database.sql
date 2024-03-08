@@ -1,7 +1,7 @@
 CREATE SCHEMA `adventure_logger` ; 
 USE adventure_logger;
 
-CREATE TABLE `user` (
+CREATE TABLE `User` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(45) DEFAULT NULL,
   `password` varchar(45) DEFAULT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE `user` (
   UNIQUE KEY `user_id_UNIQUE` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-  CREATE TABLE `route` (
+  CREATE TABLE `Route` (
   `route_id` int NOT NULL auto_increment,
   `data` json DEFAULT NULL,
   `user_id` int NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE `user` (
   CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `friend` (
+CREATE TABLE `Friend` (
   `from` int NOT NULL,
   `to` int NOT NULL,
   PRIMARY KEY (`from`,`to`),
