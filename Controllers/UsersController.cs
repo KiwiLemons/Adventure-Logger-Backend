@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AdventureLoggerBackend.Data;
 using AdventureLoggerBackend.Models;
+using MySql.Data.MySqlClient;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AdventureLoggerBackend.Controllers
 {
@@ -58,6 +60,58 @@ namespace AdventureLoggerBackend.Controllers
             var friends = _context.Friend.Where(f => f.to == id).Select(f => f.from).ToList();
 
             return await _context.User.Where(u => friends.Contains(u.user_id)).Select(u => new UserDisplay { user_id = u.user_id, UserName = u.UserName, profile_picture = u.profile_picture }).ToListAsync();
+        }
+
+        [HttpGet("follow")]
+        public async Task<ActionResult> AddFollow(int from, int to)
+        {
+            // Check if user ID's are passed in url
+            if (from == to || from == 0 || to == 0)
+                return BadRequest();
+
+            // Check that user ID's are valid
+            var fromUser = await _context.User.FindAsync(from);
+            var toUser = await _context.User.FindAsync(to);
+            if (fromUser == null || toUser == null)
+                return BadRequest();
+
+            // Add follow in friend table
+            try
+            {
+                _context.Friend.Add(new Friend { from = from, to = to });
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) { 
+                return BadRequest(ex.Message);
+            }
+            return Accepted();
+        }
+
+        [HttpGet("unfollow")]
+        public async Task<ActionResult> UnFollow(int from, int to)
+        {
+            // Check if user ID's are passed in url
+            if (from == to || from == 0 || to == 0)
+                return BadRequest();
+
+            // Check that user ID's are valid
+            var fromUser = await _context.User.FindAsync(from);
+            var toUser = await _context.User.FindAsync(to);
+            if (fromUser == null || toUser == null)
+                return BadRequest();
+
+            // Add follow in friend table
+            try
+            {
+                _context.Friend.Remove(new Friend { from = from, to = to });
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Accepted();
         }
 
         // PUT: api/Users/5
