@@ -50,7 +50,7 @@ namespace AdventureLoggerBackend.Controllers
             //Get a list of IDs that user [id] follows
             var friends = _context.Friend.Where(f => f.from == id).Select(f => f.to).ToList();
 
-            return await _context.User.Where(u => friends.Contains(u.user_id)).Select(u => new UserDisplay {user_id = u.user_id, UserName = u.UserName, profile_picture = u.profile_picture}).ToListAsync();
+            return await _context.User.Where(u => friends.Contains(u.user_id)).Select(u => new UserDisplay { user_id = u.user_id, UserName = u.UserName, profile_picture = u.profile_picture }).ToListAsync();
         }
 
         [HttpGet("{id}/followers")]
@@ -81,7 +81,7 @@ namespace AdventureLoggerBackend.Controllers
                 _context.Friend.Add(new Friend { from = from, to = to });
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex) { 
+            catch (DbUpdateException ex) {
                 return BadRequest(ex.Message);
             }
             return Accepted();
@@ -143,6 +143,15 @@ namespace AdventureLoggerBackend.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult> Login([FromBody] User user)
+        {
+            var dbUser = await _context.User.Where(u => u.UserName == user.UserName).Where(u => u.Password == user.Password).FirstOrDefaultAsync();
+            if (dbUser == null) return NotFound();
+
+            return Content($"{dbUser.user_id}");
         }
 
         // POST: api/Users
