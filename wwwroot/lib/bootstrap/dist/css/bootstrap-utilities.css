@@ -1418,6 +1418,11 @@
   background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
 }
 
+.bg-adv {
+  --bs-bg-opacity: 1;
+  background-color: rgba(2,30,54,255)
+}
+
 .bg-dark {
   --bs-bg-opacity: 1;
   background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;

@@ -2,17 +2,26 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
-
+using Microsoft.Build.Framework;
+using AdventureLoggerBackend.Data;
+using AdventureLoggerBackend.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AdventureLoggerBackend.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly AdventureLoggerBackendContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, AdventureLoggerBackendContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index(string username)
@@ -29,6 +38,7 @@ namespace AdventureLoggerBackend.Controllers
     
         public IActionResult Login(string username, string password)
         {
+            
             // Your authentication logic here
             // If authentication is successful, redirect to Home/Index with a welcome message
             if (IsValidUser(username, password))
@@ -36,15 +46,24 @@ namespace AdventureLoggerBackend.Controllers
                 return RedirectToAction("Index", "Home", new { username = username });
             }
 
+
             // If authentication fails, return to the login page
             return View();
         }
 
         // Replace this with your actual authentication logic
-        private bool IsValidUser(string username, string password)
+         private bool IsValidUser(string username, string password)
         {
-            // Simplified validation logic, replace with actual authentication
-            return !string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password);
+            // Retrieve user from the database based on the provided username
+            var user = _context.User.FirstOrDefault(u => u.UserName == username);
+
+            // Check if user exists and if the provided password matches the stored password
+            if (user != null && user.Password == password)
+            {
+                return true; // User authenticated successfully
+            }
+
+            return false; // Authentication failed
         }
 
 
