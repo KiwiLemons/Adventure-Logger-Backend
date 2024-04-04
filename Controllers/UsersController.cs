@@ -159,6 +159,7 @@ namespace AdventureLoggerBackend.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
+            if (_context.User.FirstOrDefault(u => u.UserName == user.UserName) != null) return BadRequest("User already exists with that name");
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 
