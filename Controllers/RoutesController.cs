@@ -1,91 +1,132 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using AdventureLoggerBackend.Data;
+using AdventureLoggerBackend.Models;
+using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
 
 namespace AdventureLoggerBackend.Controllers
 {
-    [Route("routes")]
-    public class RoutesController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class RoutesController : ControllerBase
     {
-        // GET: routes
-        public ActionResult Index()
+        private readonly AdventureLoggerBackendContext _context;
+
+        public RoutesController(AdventureLoggerBackendContext context)
         {
-            return Content("Home");
+            _context = context;
         }
 
-        // GET: routes/Details/5
-        [Route("details")]
-        public ActionResult Details(int id)
+        // GET: api/Routes
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Models.Route>>> GetRoute()
         {
-            return Content($"id is {id}");
+            return await _context.Route.ToListAsync();
         }
 
-        // GET: routes/Create
-        [Route("create")]
-        public ActionResult Create()
+        // GET: api/Routes/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Models.Route>> GetRoute(int id)
         {
-            return View();
+            var Route = await _context.Route.FindAsync(id);
+
+            if (Route == null)
+            {
+                return NotFound();
+            }
+
+            return Route;
         }
 
-        // POST: routes/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("create")]
-        public ActionResult Create(IFormCollection collection)
+        // PUT: api/Routes/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutRoute(int id, Models.Route Route)
         {
+            if (id != Route.route_id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(Route).State = EntityState.Modified;
+
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
             }
-            catch
+            catch (DbUpdateConcurrencyException)
             {
-                return View();
+                if (!RouteExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
+
+            return NoContent();
         }
 
-        // GET: routes/Edit/5
-        [Route("edit")]
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: routes/Edit/5
+        // POST: api/Routes
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("edit")]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult<Models.Route>> PostRoute(int route_id, string data)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            Models.Route? route = await _context.Route.FindAsync(route_id);
+            if (route == null)
+                return NoContent();
+
+            var routeData = JArray.Parse(route.data);
+            routeData.Add(JToken.Parse(data));
+            route.data = routeData.ToJson();
+
+            await _context.SaveChangesAsync();
+
+            return Content("Data added");
         }
 
-        // GET: routes/Delete/5
-        [Route("delete")]
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: routes/Delete/5
+        // POST: api/Routes
+        // Create a route from a name
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("delete")]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult<Models.Route>> PostRoute(Models.Route route)
         {
-            try
+            Console.WriteLine(route);
+            var madeRoute = _context.Route.Add(route);
+            madeRoute.Entity.data = "[]";
+
+            //await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetRoute", new { id = route.route_id }, route);
+        }
+
+        // DELETE: api/Routes/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRoute(int id)
+        {
+            var Route = await _context.Route.FindAsync(id);
+            if (Route == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
+
+            _context.Route.Remove(Route);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool RouteExists(int id)
+        {
+            return _context.Route.Any(e => e.route_id == id);
         }
     }
 }

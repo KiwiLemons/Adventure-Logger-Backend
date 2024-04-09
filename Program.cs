@@ -18,7 +18,7 @@ if (builder.Environment.IsProduction())
         builder.WebHost.UseUrls($"http://*:{port}");
 
     var ConnBuilder = new MySqlConnectionStringBuilder();
-    ConnBuilder.Server = "34.136.209.180";
+    ConnBuilder.Server = "10.56.144.3";
     ConnBuilder.Database = "adventure_logger";
     ConnBuilder.UserID = "root";
     ConnBuilder.Password = DBpass;
