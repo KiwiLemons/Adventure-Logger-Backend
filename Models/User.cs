@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MySql.Data;
+using AdventureLoggerBackend.Data;
 
 namespace AdventureLoggerBackend.Models
 {
@@ -13,6 +13,10 @@ namespace AdventureLoggerBackend.Models
         [Required]
         [Length(5,45)]
         public string Password { get; set; }
+
+        public string Email { get; set; }
+        [Required]
+        [Length(5,99)]
         public string? profile_picture { get; set; }
     }
 }

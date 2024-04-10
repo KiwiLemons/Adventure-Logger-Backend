@@ -1,0 +1,21 @@
+@* SignUp.cshtml *@
+@model AdventureLoggerBackend.Models.UserSignUpViewModel
+
+<form method="post" asp-action="Index">
+    <div>
+        <label asp-for="Username"></label>
+        <input asp-for="Username" />
+        <span asp-validation-for="Username"></span>
+    </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+    <button type="submit">Sign Up</button>
+</form>

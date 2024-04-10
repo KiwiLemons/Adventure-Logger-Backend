@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using AdventureLoggerBackend.Models;
 
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddScoped<IUserService, UserService>();
+
         services.AddControllersWithViews();
 
         services.AddSession(options =>
@@ -43,6 +47,11 @@ public class Startup
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            endpoints.MapControllerRoute(
+                name: "signup",
+                pattern: "SignUp", // URL path for the sign-up page
+                defaults: new { controller = "SignUp", action = "Index" }); // Route to SignUpController
         });
     }
 }

@@ -4,12 +4,11 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Build.Framework;
 using AdventureLoggerBackend.Data;
-using AdventureLoggerBackend.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AdventureLoggerBackend.Controllers
 {
@@ -36,10 +35,11 @@ namespace AdventureLoggerBackend.Controllers
         }
 
     
-        public IActionResult Login(string username, string password)
+        public IActionResult Login(LoginViewModel lvm)
         {
-            
-            // Your authentication logic here
+            string username = lvm.Username;
+            string password = lvm.Password;
+
             // If authentication is successful, redirect to Home/Index with a welcome message
             if (IsValidUser(username, password))
             {
