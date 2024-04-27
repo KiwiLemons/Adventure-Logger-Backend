@@ -43,6 +43,11 @@ namespace AdventureLoggerBackend.Controllers
 
             return user;
         }
+        [HttpGet("{id}/routes")]
+        public async Task<ActionResult<IEnumerable<RouteDisplay>>> GetRoutes(int id)
+        {
+            return await _context.Route.Where(r => r.user_id == id).Select(r => new RouteDisplay { route_id = r.route_id, name = r.name, distance = r.distance }).ToListAsync();
+        }
 
         [HttpGet("{id}/following")]
         public async Task<ActionResult<IEnumerable<UserDisplay>>> GetFollowing(int id)

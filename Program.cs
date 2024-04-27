@@ -34,6 +34,8 @@ else if (builder.Environment.IsDevelopment())
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddControllers().AddNewtonsoftJson();
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

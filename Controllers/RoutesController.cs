@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AdventureLoggerBackend.Data;
 using AdventureLoggerBackend.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json.Linq;
-using NuGet.Protocol;
+using NuGet.Packaging;
 
 namespace AdventureLoggerBackend.Controllers
 {
@@ -77,17 +79,25 @@ namespace AdventureLoggerBackend.Controllers
 
         // POST: api/Routes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Route("{id}")]
         [HttpPost]
-        public async Task<ActionResult<Models.Route>> PostRoute(int route_id, string data)
+        public async Task<ActionResult<Models.Route>> PostRoute(int id, JObject data)
         {
-            Models.Route? route = await _context.Route.FindAsync(route_id);
+            Models.Route? route = await _context.Route.FindAsync(id);
+            Console.WriteLine(id);
             if (route == null)
                 return NoContent();
 
-            var routeData = JArray.Parse(route.data);
-            routeData.Add(JToken.Parse(data));
-            route.data = routeData.ToJson();
+            var routeData = JArray.Parse(route.data == null ? "[]" : route.data);
+            var newRouteData = (JArray) data["data"];
+            Console.WriteLine(newRouteData);
 
+            foreach (var point in newRouteData) {
+                routeData.Add(point);
+            }
+
+            route.data = routeData.ToString();
+            Console.WriteLine(route.data);
             await _context.SaveChangesAsync();
 
             return Content("Data added");
@@ -96,14 +106,17 @@ namespace AdventureLoggerBackend.Controllers
         // POST: api/Routes
         // Create a route from a name
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Route("create")]
         [HttpPost]
-        public async Task<ActionResult<Models.Route>> PostRoute(Models.Route route)
+        public async Task<ActionResult<Models.Route>> CreateRoute(Models.Route route)
         {
-            Console.WriteLine(route);
-            var madeRoute = _context.Route.Add(route);
-            madeRoute.Entity.data = "[]";
+            // validate route
+            if (!_context.User.Any(e => e.user_id == route.user_id))
+                return NotFound("No user with that id");
 
-            //await _context.SaveChangesAsync();
+            var madeRoute = _context.Route.Add(route);
+
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRoute", new { id = route.route_id }, route);
         }
