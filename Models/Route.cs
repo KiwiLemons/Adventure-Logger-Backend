@@ -15,6 +15,7 @@ namespace AdventureLoggerBackend.Models
         [Length(5,45)]
         public string name { get; set; }
         public int distance { get; set; } = 0;
-        public string? data {  get; set; }
+        public string? data { get; set; }
+        public int data_points { get; set; } = 0;
     }
 }

@@ -84,20 +84,20 @@ namespace AdventureLoggerBackend.Controllers
         public async Task<ActionResult<Models.Route>> PostRoute(int id, JObject data)
         {
             Models.Route? route = await _context.Route.FindAsync(id);
-            Console.WriteLine(id);
             if (route == null)
                 return NoContent();
 
             var routeData = JArray.Parse(route.data == null ? "[]" : route.data);
             var newRouteData = (JArray) data["data"];
-            Console.WriteLine(newRouteData);
+            if (newRouteData == null)
+                return BadRequest();
 
             foreach (var point in newRouteData) {
                 routeData.Add(point);
             }
 
             route.data = routeData.ToString();
-            Console.WriteLine(route.data);
+            route.data_points += newRouteData.Count;
             await _context.SaveChangesAsync();
 
             return Content("Data added");
